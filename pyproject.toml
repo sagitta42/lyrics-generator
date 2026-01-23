@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "lyrics-generator"
+version = "0.1.0"
+description = "Lyrics generator"
+authors = ["sagitta42 <mariia.redchuk@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "lyrics_generator", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.12.5"
+pandas = "^3.0.0"
+dotenv = "^0.9.9"
+scikit-learn = "^1.8.0"
+tensorflow = "^2.20.0"
+keras = "^3.13.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^26.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
