@@ -1,6 +1,6 @@
 import sys
 
-from src.lyrics_generator import generate_lyrics
+from lyrics_generator import generate_lyrics
 
 lyrics_path = sys.argv[1]
 settings_path = sys.argv[2]
