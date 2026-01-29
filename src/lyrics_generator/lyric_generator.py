@@ -1,7 +1,7 @@
-from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from .logger import log
 from .lyrics_data import LyricsData
 from .model import LyricsModel
 from .schemas import WordSequence
@@ -18,9 +18,9 @@ class LyricGenerator:
         self._results = pd.DataFrame({"epoch": [], "diversity": []})
         self._results = self._results.set_index(["epoch", "diversity"])
 
-        # TODO: return results as strings, implement result retrieval
-        # implement saving in given path
-        self._output_folder = Path("results/")
+    @property
+    def results(self) -> pd.DataFrame:
+        return self._results
 
     def set_text_length(self, value: int):
         self._text_length = value
@@ -28,9 +28,9 @@ class LyricGenerator:
     def set_diversities(self, div: list[float]):
         self._diversities = div
 
-    def on_epoch_end(self, epoch, logs):
+    def generate_epoch_result(self, epoch, logs):
         """Function invoked at end of each epoch. Prints generated text."""
-
+        log.info("Generating lyrics at epoch end...")
         seed_index = np.random.randint(len(self._model.training_data.all_sentences))
         seed_sentence = (self._model.training_data.all_sentences)[seed_index]
 
@@ -40,7 +40,6 @@ class LyricGenerator:
                 seed_sentence
             )
             self._results.at[(epoch, d), "text"] = self._get_string_sentence(text)
-            self._save_text(epoch, d)
 
     def _generate_text(
         self,
@@ -62,12 +61,6 @@ class LyricGenerator:
 
             sentence = sentence[1:] + [next_word]
         return text
-
-    def _save_text(self, epoch, diversity: float):
-        text = self._results.at[(epoch, diversity), "text"]
-        filename = self._output_folder / f"epoch{epoch}_diversity{diversity}_result.txt"
-        with open(filename, "w") as f:
-            f.write(text)
 
     def _get_string_sentence(self, sentence: WordSequence) -> str:
         return " ".join(sentence)
