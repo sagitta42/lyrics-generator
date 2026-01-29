@@ -1,7 +1,7 @@
 {
-    "min_common_word_frequency": 7,
-    "min_valid_sequence": 5,
-    "batch_size": 32,
+    "min_common_word_frequency": 4,
+    "min_valid_sequence": 4,
+    "batch_size": 10,
     "diversities": [
         0.8,
         0.9,
@@ -16,7 +16,7 @@
     "metrics": [
         "acc"
     ],
-    "num_epochs": 2,
+    "num_epochs": 10,
     "monitor": "val_acc",
     "patience": 20
 }
