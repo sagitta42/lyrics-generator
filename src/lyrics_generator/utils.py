@@ -1,35 +1,41 @@
-import logging
 import numpy as np
-from dotenv import dotenv_values
+import string
+
+from .schemas import WordSequence, Text
 
 
-class Logger:
-    def __init__(self, log_level=logging.INFO):
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(log_level)
-        handler = logging.StreamHandler()
-        handler.setLevel(log_level)
-        self._logger.addHandler(handler)
+# TODO: treat punctuaton as words when drop_punctuation is False
+# add drop punctuation as input setting
+# (rename to punctuation_is_word or similar)
+def clean_text(text: str, drop_punctuation: bool = True) -> str:
+    """
+    Clean and uniformize text.
 
-    @property
-    def info(self):
-        return self._logger.info
+    Convert all words to lowercase.
 
-    @property
-    def error(self):
-        return self._logger.error
+    drop_punctuation [bool]: If true, remove punctuation (commas, periods, question marks)
+    """
+    translator_args = ["", ""]
+    if drop_punctuation:
+        translator_args.append(string.punctuation)
+    translator = str.maketrans(*translator_args)
+    ret = " \n ".join(
+        [
+            l.lower().strip().translate(translator)
+            for l in text.splitlines()
+            if len(l) > 0
+        ]
+    )
+    return ret
 
-    @property
-    def debug(self):
-        return self._logger.debug
 
+# TODO: optionally consider punctuation words
+def extract_words(text: Text) -> WordSequence:
+    """
+    Extract words from text.
 
-env_config = dotenv_values()
-is_debug = env_config.get("DEBUG", "").lower() in ("true", "1")
-log = Logger(log_level=logging.DEBUG if is_debug else logging.INFO)
-
-
-def extract_words(text: str):
+    Newline character is considered a word (from POV of lyrics generation)
+    """
     words = [w for w in text.split(" ") if w.strip() != "" or w == "\n"]
     return words
 

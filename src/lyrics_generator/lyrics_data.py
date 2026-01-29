@@ -1,17 +1,18 @@
 import numpy as np
-from pathlib import Path
 import pandas as pd
 
-from .schemas import Sentence, Word
-from .utils import log, extract_words
+from .logger import log
+from .schemas import WordSequence, Word, LyricsInput
 
 
+# TODO: rename to LyricsAnalyzer
 class LyricsData:
-    def __init__(self, df: pd.DataFrame) -> None:
-        self.df = df
+    def __init__(self, lyrics_input: LyricsInput) -> None:
+        self._lyrics_input = lyrics_input
+
         self._min_valid_sequence: int = None
 
-        self._text_words: list[Word] = sum(self.df["words"], [])
+        self._text_words: WordSequence = sum(self._lyrics_input.values(), [])
 
         self._frequencies = {}
         for w in self._text_words:
@@ -19,7 +20,7 @@ class LyricsData:
 
         self._df_common_words = pd.DataFrame()
         self._uncommon_words = set()
-        self._valid_sequences: list[Sentence] = []
+        self._valid_sequences: list[WordSequence] = []
         self._sequence_end_words: list[Word] = []
 
     def set_min_valid_sequence(self, value: int):
@@ -30,7 +31,7 @@ class LyricsData:
         return self._min_valid_sequence
 
     @property
-    def valid_sequences(self) -> list[Sentence]:
+    def valid_sequences(self) -> list[WordSequence]:
         return self._valid_sequences
 
     @property
@@ -91,6 +92,7 @@ class LyricsData:
 
             yield x, y
 
+    # TODO: DataFrame unnecesary, use dict / reversed dict
     def get_word_index(self, word: Word) -> int:
         ret = self._df_common_words.set_index("word")["index"].loc[word]
         return ret
@@ -109,14 +111,3 @@ class LyricsData:
         }
         for descr, num in log_info.items():
             log.info(f"{descr}: \t {num}")
-
-
-class LyricsDataBuilder:
-    def get_lyrics_data(self, path: str) -> LyricsData:
-        path_to_lyrics = Path(path)
-        df = pd.read_csv(path_to_lyrics)
-        # TODO: single_text not needed - just intermediate stage
-        # TODO: converting txt lyrics to this csv
-        df["words"] = df["single_text"].apply(lambda x: extract_words(x))
-        ret = LyricsData(df)
-        return ret

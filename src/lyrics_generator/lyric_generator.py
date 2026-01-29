@@ -4,7 +4,7 @@ import pandas as pd
 
 from .lyrics_data import LyricsData
 from .model import LyricsModel
-from .schemas import Sentence
+from .schemas import WordSequence
 from .utils import sample
 
 
@@ -44,10 +44,10 @@ class LyricGenerator:
 
     def _generate_text(
         self,
-        seed_sentence: Sentence,
+        seed_sentence: WordSequence,
         diversity: float,
-    ) -> Sentence:
-        text: Sentence = []
+    ) -> WordSequence:
+        text: WordSequence = []
         sentence = seed_sentence
         for i in range(self._text_length):
             predicted_indices = np.zeros((1, self._lyrics_data.min_valid_sequence))
@@ -69,5 +69,5 @@ class LyricGenerator:
         with open(filename, "w") as f:
             f.write(text)
 
-    def _get_string_sentence(self, sentence: Sentence) -> str:
+    def _get_string_sentence(self, sentence: WordSequence) -> str:
         return " ".join(sentence)

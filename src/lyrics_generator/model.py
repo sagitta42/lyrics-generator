@@ -11,8 +11,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from .lyrics_data import LyricsData
-from .schemas import Sentence, TrainingData, Word
-from .utils import log
+from .schemas import WordSequence, TrainingData, Word
+from .logger import log
 
 
 class LyricsModel:
@@ -75,7 +75,7 @@ class LyricsModel:
 
     def get_training_data(
         self,
-        word_sequences: list[Sentence],
+        word_sequences: list[WordSequence],
         sequence_ends: list[Word],
         test_size: float,
         random_state: int,

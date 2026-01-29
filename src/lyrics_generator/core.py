@@ -1,22 +1,30 @@
 import json
+from pathlib import Path
 
+from .lyrics_data import LyricsData
 from .lyric_generator import LyricGenerator
 from .model import ModelBuilder
 from .schemas import Settings
+from .song_lyrics import SongLyricsBuilder
 from .utils import get_keras_filepath
 
-from .lyrics_data import LyricsDataBuilder
 
+# TODO: more step-by-step methods
+def generate_lyrics(lyrics_path: str | Path, settings_path: str | Path):
+    # TODO: improve and validate
+    if isinstance(lyrics_path, str):
+        lyrics_path = Path(lyrics_path)
+    if isinstance(settings_path, str):
+        settings_path = Path(settings_path)
 
-# TODO: better input
-# TODO: more methods
-def generate_lyrics(lyrics_path: str, settings_path: str):
     with open(settings_path) as f:
         settings = Settings(**json.load(f))
 
-    lyrics_builder = LyricsDataBuilder()
+    lyrics_builder = SongLyricsBuilder()
+    song_lyrics = lyrics_builder.build_song_lyrics(lyrics_path)
+    lyrics_input = song_lyrics.get_input()
 
-    data_lyrics = lyrics_builder.get_lyrics_data(lyrics_path)
+    data_lyrics = LyricsData(lyrics_input)
     data_lyrics.set_min_valid_sequence(settings.min_valid_sequence)
     data_lyrics.get_statistics(
         min_common_word_frequency=settings.min_common_word_frequency,
