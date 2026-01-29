@@ -10,8 +10,18 @@ https://www.activestate.com/blog/how-to-build-a-lyrics-generator-with-python-rec
 Install via
 
 ```bash
+pip install git+https://github.com/sagitta42/lyrics-generator.git@v0.1.0
+```
+
+to get the first working version
+
+or
+
+```bash
 pip install git+https://github.com/sagitta42/lyrics-generator.git
 ```
+
+to get latest.
 
 Then you can use `import lyrics_generator` in the environment you installed it in.
 
