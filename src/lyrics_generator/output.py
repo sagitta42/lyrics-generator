@@ -14,6 +14,34 @@ class OutputManager:
         pass
 
 
+class MonoOutput:
+    def _get_output_lines(self, df: pd.DataFrame) -> list[str]:
+        ret = []
+
+        df_output = df.copy()
+        df_output = df_output.reset_index()
+        df_output["diversity_result"] = (
+            "--- Diversity "
+            + df_output["diversity"].astype(str)
+            + "\n"
+            + df_output["text"].astype(str)
+            + "\n"
+        )
+
+        for epoch in df_output["epoch"].unique():
+            df_epoch = df_output[df_output["epoch"] == epoch]
+
+            seed = df_epoch["seed"].unique()[0]
+            header = []
+            header.append(f"===== Epoch {int(epoch)}")
+            header.append(f"Seed: {seed}")
+            header.append("")
+            ret.append("\n".join(header))
+            ret.append("\n".join(df_epoch["diversity_result"]))
+
+        return ret
+
+
 class FileOutput(OutputManager):
     def __init__(self, output_folder: Path = Path("results")) -> None:
         self._output_folder = output_folder
@@ -22,7 +50,7 @@ class FileOutput(OutputManager):
             os.makedirs(self._output_folder)
 
         # TODO: customize
-        self._filename = self._output_folder / "result"
+        self._filename: Path = self._output_folder / "result"
 
 
 class CsvOutput(FileOutput):
@@ -34,10 +62,12 @@ class CsvOutput(FileOutput):
         df.to_csv(f"{self._filename}.csv", sep="\t", header=True, index=False)
 
 
-class TxtOutput(FileOutput):
-    # TODO: all epochs in the same file
+class TxtOutput(MonoOutput, FileOutput):
     def produce_output(self, df: pd.DataFrame):
-        pass
+        lines = self._get_output_lines(df)
+
+        with open(f"{self._filename}.txt", "w") as f:
+            f.writelines(lines)
 
 
 class SeparateEpochTxtOutput(TxtOutput):
@@ -46,28 +76,11 @@ class SeparateEpochTxtOutput(TxtOutput):
         pass
 
 
-class PrintOutput(OutputManager):
+class PrintOutput(MonoOutput, OutputManager):
     def produce_output(self, df: pd.DataFrame):
-        df_output = df.copy()
-        df_output = df_output.reset_index()
-        df_output["diversity_result"] = (
-            "Diversity "
-            + df_output["diversity"].astype(str)
-            + "->\n"
-            + df_output["text"].astype(str)
-            + "\n"
-        )
-
-        for epoch in df_output["epoch"].unique():
-            df_epoch = df_output[df_output["epoch"] == epoch]
-
-            seed = df_epoch["seed"].unique()[0]
-            header = []
-            header.append("=" * 10)
-            header.append(f"@ Epoch {int(epoch)} - Seed: {seed}")
-            header.append("-" * 10)
-            log.info("\n".join(header))
-            log.info("\n".join(df_epoch["diversity_result"]))
+        lines = self._get_output_lines(df)
+        for l in lines:
+            log.info(l)
 
 
 class OutputType(str, enum.Enum):
