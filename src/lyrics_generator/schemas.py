@@ -7,7 +7,7 @@ Word = str
 WordSequence = list[Word]
 SongId = str
 ParsedLyrics = dict[SongId, Text]
-LyricsInput = dict[SongId, WordSequence]
+Lyrics = dict[SongId, WordSequence]
 
 
 # TODO: split into multiple categories of settings

@@ -5,9 +5,9 @@ from pathlib import Path
 from .lyrics_data import LyricsData
 from .lyric_generator import LyricGenerator
 from .model import ModelBuilder
-from .output import OutputBuilder
+from .user_output import OutputBuilder
 from .schemas import Settings
-from .song_lyrics import SongLyricsBuilder
+from .song_lyrics import LyricsReaderBuilder
 from .utils import get_keras_filepath
 
 
@@ -24,14 +24,14 @@ def generate_lyrics(
     with open(settings_path) as f:
         settings = Settings(**json.load(f))
 
-    lyrics_builder = SongLyricsBuilder()
-    song_lyrics = lyrics_builder.build_song_lyrics(lyrics_path)
-    lyrics_input = song_lyrics.get_input()
+    reader_builder = LyricsReaderBuilder()
+    lyrics_reader = reader_builder.build_lyrics_reader(lyrics_path)
+    lyrics = lyrics_reader.get_lyrics()
 
     output_builder = OutputBuilder()
     output_manager = output_builder.build_output(output_type, lyrics_path.stem)
 
-    data_lyrics = LyricsData(lyrics_input)
+    data_lyrics = LyricsData(lyrics)
     data_lyrics.set_min_valid_sequence(settings.min_valid_sequence)
     data_lyrics.get_statistics(
         min_common_word_frequency=settings.min_common_word_frequency,

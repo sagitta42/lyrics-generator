@@ -1,12 +1,12 @@
 from abc import abstractmethod
 from pathlib import Path
 
-from .schemas import LyricsInput, ParsedLyrics
+from .schemas import Lyrics, ParsedLyrics
 from .utils import clean_text, extract_words
 
 
-class SongLyrics:
-    def get_input(self) -> LyricsInput:
+class LyricsReader:
+    def get_lyrics(self) -> Lyrics:
         """
         Return final lyrics input.
 
@@ -27,7 +27,7 @@ class SongLyrics:
         pass
 
 
-class TxtSongLyrics(SongLyrics):
+class TxtLyricsReader(LyricsReader):
     def __init__(self, path_to_lyrics: Path) -> None:
         self.path_to_lyrics = path_to_lyrics
 
@@ -57,11 +57,11 @@ class TxtSongLyrics(SongLyrics):
         return ret
 
 
-class SongLyricsBuilder:
-    def build_song_lyrics(self, path: str | Path) -> SongLyrics:
+class LyricsReaderBuilder:
+    def build_lyrics_reader(self, path: str | Path) -> LyricsReader:
         path_to_lyrics = Path(path) if isinstance(path, str) else path
         if path_to_lyrics.suffix == ".txt":
-            return TxtSongLyrics(path_to_lyrics)
+            return TxtLyricsReader(path_to_lyrics)
 
         raise NotImplementedError(
             f"Only .txt file input is supported. Your input: {path}"

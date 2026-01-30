@@ -1,4 +1,4 @@
-from lyrics_generator.output import OutputManager
+from lyrics_generator.user_output import OutputManager
 
 
 def test_identifier():

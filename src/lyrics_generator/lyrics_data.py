@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 
 from .logger import log
-from .schemas import WordSequence, Word, LyricsInput
+from .schemas import WordSequence, Word, Lyrics
 
 
 # TODO: rename to LyricsAnalyzer
 class LyricsData:
-    def __init__(self, lyrics_input: LyricsInput) -> None:
+    def __init__(self, lyrics_input: Lyrics) -> None:
         self._lyrics_input = lyrics_input
 
         self._min_valid_sequence: int = None
