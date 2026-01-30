@@ -3,7 +3,7 @@ from pathlib import Path
 from lyrics_generator.logger import log
 from lyrics_generator.lyrics_data import LyricsData
 from lyrics_generator.schemas import SongId, Lyrics
-from lyrics_generator.song_lyrics import LyricsReaderBuilder
+from lyrics_generator.lyrics_reader import LyricsReaderBuilder
 
 from . import STANDARD_TEST
 

@@ -1,10 +1,10 @@
 from pathlib import Path
 
 from lyrics_generator.lyrics_data import LyricsData
-from lyrics_generator.lyric_generator import LyricGenerator
+from lyrics_generator.generator import LyricsGenerator
 from lyrics_generator.model import ModelBuilder
 from lyrics_generator.user_output import OutputBuilder
-from lyrics_generator.song_lyrics import LyricsReaderBuilder
+from lyrics_generator.lyrics_reader import LyricsReaderBuilder
 from lyrics_generator.user_input import UserInput
 from lyrics_generator.utils import get_keras_filepath
 
@@ -47,7 +47,7 @@ def generate_lyrics(
     lyrics_model.set_checkpoint(file_path, settings.monitor)
     lyrics_model.set_early_stopping(settings.monitor, settings.patience)
 
-    lyric_generator = LyricGenerator(lyrics_data=data_lyrics, model=lyrics_model)
+    lyric_generator = LyricsGenerator(lyrics_data=data_lyrics, model=lyrics_model)
     lyric_generator.set_text_length(settings.text_length)
     lyric_generator.set_diversities(settings.diversities)
 

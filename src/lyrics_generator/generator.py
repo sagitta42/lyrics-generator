@@ -8,7 +8,7 @@ from lyrics_generator.schemas import WordSequence
 from lyrics_generator.utils import sample
 
 
-class LyricGenerator:
+class LyricsGenerator:
     def __init__(self, lyrics_data: LyricsData, model: LyricsModel):
         self._lyrics_data = lyrics_data
         self._model = model
