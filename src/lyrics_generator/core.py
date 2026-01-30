@@ -1,35 +1,34 @@
-import json
 from pathlib import Path
+
+from lyrics_generator.user_input import UserInput
 
 
 from .lyrics_data import LyricsData
 from .lyric_generator import LyricGenerator
 from .model import ModelBuilder
 from .user_output import OutputBuilder
-from .schemas import Settings
 from .song_lyrics import LyricsReaderBuilder
 from .utils import get_keras_filepath
 
 
-# TODO: more step-by-step methods
 def generate_lyrics(
     lyrics_path: str | Path, settings_path: str | Path, output_type: str
 ):
-    # TODO: improve and validate
-    if isinstance(lyrics_path, str):
-        lyrics_path = Path(lyrics_path)
-    if isinstance(settings_path, str):
-        settings_path = Path(settings_path)
 
-    with open(settings_path) as f:
-        settings = Settings(**json.load(f))
+    user_input = UserInput(
+        **{
+            "inputs": {"lyrics_path": lyrics_path, "settings_path": settings_path},
+            "output_type": output_type,
+        }
+    )
+    settings = user_input.get_settings()
 
     reader_builder = LyricsReaderBuilder()
-    lyrics_reader = reader_builder.build_lyrics_reader(lyrics_path)
+    lyrics_reader = reader_builder.build_lyrics_reader(user_input.inputs.lyrics_path)
     lyrics = lyrics_reader.get_lyrics()
 
     output_builder = OutputBuilder()
-    output_manager = output_builder.build_output(output_type, lyrics_path.stem)
+    output_manager = output_builder.build_output(output_type, user_input.identifier)
 
     data_lyrics = LyricsData(lyrics)
     data_lyrics.set_min_valid_sequence(settings.min_valid_sequence)

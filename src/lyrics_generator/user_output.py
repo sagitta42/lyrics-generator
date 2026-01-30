@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 import pandas as pd
 
+from lyrics_generator.schemas import OutputType
+
 from .logger import log
 
 
@@ -91,12 +93,6 @@ class PrintOutput(MonoOutput, OutputManager):
         lines = self._get_output_lines(df)
         for l in lines:
             log.info(l)
-
-
-class OutputType(str, enum.Enum):
-    print = "print"
-    save_txt = "save_txt"
-    save_csv = "save_csv"
 
 
 class ResultOutput(enum.Enum):

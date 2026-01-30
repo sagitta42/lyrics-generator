@@ -7,3 +7,4 @@ PATH_CURRENT = os.path.dirname(__file__)
 EXAMPLES_DIR = Path(PATH_CURRENT) / ".." / "examples"
 STANDARD_TEST = EXAMPLES_DIR / "into_glory_ride.txt"
 SETTINGS_DIR = Path(PATH_CURRENT) / "settings"
+STANDARD_SETTINGS = SETTINGS_DIR / "test_settings.json"

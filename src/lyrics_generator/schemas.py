@@ -1,3 +1,4 @@
+import enum
 from pydantic import BaseModel
 
 # TODO: improve to validate pydantic models
@@ -8,6 +9,12 @@ WordSequence = list[Word]
 SongId = str
 ParsedLyrics = dict[SongId, Text]
 Lyrics = dict[SongId, WordSequence]
+
+
+class OutputType(str, enum.Enum):
+    print = "print"
+    save_txt = "save_txt"
+    save_csv = "save_csv"
 
 
 # TODO: split into multiple categories of settings
