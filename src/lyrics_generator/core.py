@@ -1,14 +1,12 @@
 from pathlib import Path
 
+from lyrics_generator.lyrics_data import LyricsData
+from lyrics_generator.lyric_generator import LyricGenerator
+from lyrics_generator.model import ModelBuilder
+from lyrics_generator.user_output import OutputBuilder
+from lyrics_generator.song_lyrics import LyricsReaderBuilder
 from lyrics_generator.user_input import UserInput
-
-
-from .lyrics_data import LyricsData
-from .lyric_generator import LyricGenerator
-from .model import ModelBuilder
-from .user_output import OutputBuilder
-from .song_lyrics import LyricsReaderBuilder
-from .utils import get_keras_filepath
+from lyrics_generator.utils import get_keras_filepath
 
 
 def generate_lyrics(

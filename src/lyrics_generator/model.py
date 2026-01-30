@@ -10,9 +10,9 @@ from keras.layers import (
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-from .lyrics_data import LyricsData
-from .schemas import WordSequence, TrainingData, Word
-from .logger import log
+from lyrics_generator.lyrics_data import LyricsData
+from lyrics_generator.schemas import WordSequence, TrainingData, Word
+from lyrics_generator.logger import log
 
 
 class LyricsModel:

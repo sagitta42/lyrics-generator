@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from .logger import log
-from .schemas import WordSequence, Word, Lyrics
+from lyrics_generator.logger import log
+from lyrics_generator.schemas import WordSequence, Word, Lyrics
 
 
 # TODO: rename to LyricsAnalyzer

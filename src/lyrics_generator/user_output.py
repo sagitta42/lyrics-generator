@@ -5,9 +5,8 @@ import os
 from pathlib import Path
 import pandas as pd
 
+from lyrics_generator.logger import log
 from lyrics_generator.schemas import OutputType
-
-from .logger import log
 
 
 class OutputManager:

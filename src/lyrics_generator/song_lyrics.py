@@ -1,8 +1,8 @@
 from abc import abstractmethod
 from pathlib import Path
 
-from .schemas import Lyrics, ParsedLyrics
-from .utils import clean_text, extract_words
+from lyrics_generator.schemas import Lyrics, ParsedLyrics
+from lyrics_generator.utils import clean_text, extract_words
 
 
 class LyricsReader:

@@ -1,7 +1,7 @@
 import numpy as np
 import string
 
-from .schemas import WordSequence, Text
+from lyrics_generator.schemas import WordSequence, Text
 
 
 # TODO: treat punctuaton as words when drop_punctuation is False

@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 
-from .logger import log
-from .lyrics_data import LyricsData
-from .model import LyricsModel
-from .schemas import WordSequence
-from .utils import sample
+from lyrics_generator.logger import log
+from lyrics_generator.lyrics_data import LyricsData
+from lyrics_generator.model import LyricsModel
+from lyrics_generator.schemas import WordSequence
+from lyrics_generator.utils import sample
 
 
 class LyricGenerator:
