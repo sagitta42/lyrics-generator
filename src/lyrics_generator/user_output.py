@@ -12,7 +12,7 @@ from lyrics_generator.schemas import OutputType
 class OutputManager:
     def __init__(self, identifier: str) -> None:
         self._output_id = (
-            identifier + "_" + datetime.now().strftime("%Y%m%d") + "_results"
+            identifier + "_" + datetime.now().strftime("%Y%m%d%Hw%M") + "_results"
         )
 
     @property
