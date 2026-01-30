@@ -1,9 +1,7 @@
-from pathlib import Path
-
 from lyrics_generator.logger import log
 from lyrics_generator.lyrics_data import LyricsData
-from lyrics_generator.schemas import SongId, Lyrics
-from lyrics_generator.lyrics_reader import LyricsReaderBuilder
+from lyrics_generator.schemas import SongId
+from tests.utils import _get_txt_lyrics_input
 
 from . import STANDARD_TEST
 
@@ -25,11 +23,3 @@ def test_lyrics_data():
     lyrics_data.set_min_valid_sequence(5)
 
     lyrics_data.get_statistics(min_common_word_frequency=4)
-
-
-def _get_txt_lyrics_input(path_to_test_input: Path) -> Lyrics:
-    lyrics_builder = LyricsReaderBuilder()
-    txt_lyrics = lyrics_builder.build_lyrics_reader(path_to_test_input)
-
-    ret = txt_lyrics.get_lyrics()
-    return ret

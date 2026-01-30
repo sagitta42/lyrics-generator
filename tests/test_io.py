@@ -1,7 +1,9 @@
+import json
 from pathlib import Path
 from lyrics_generator.user_input import UserInput
 from lyrics_generator.schemas import OutputType, Settings
-from lyrics_generator.user_output import OutputManager
+from lyrics_generator.user_output import OutputBuilder, OutputManager
+from tests.utils import _get_txt_lyrics_input
 from . import STANDARD_TEST, STANDARD_SETTINGS
 
 
@@ -23,9 +25,16 @@ def test_str_input():
 
 def test_output():
     identifier = "test"
+    output_type = "save_txt"
 
-    output_manager = OutputManager(identifier)
-    print(output_manager.output_id)
+    output_builder = OutputBuilder()
+    output_manager = output_builder.build_output(OutputType[output_type], identifier)
+
+    lyrics = _get_txt_lyrics_input(STANDARD_TEST)
+    with open(STANDARD_SETTINGS) as f:
+        settings = Settings(**json.load(f))
+
+    output_manager.manage_metadata(lyrics, settings)
 
 
 def _test_input(lyrics_path, settings_path, output_type):

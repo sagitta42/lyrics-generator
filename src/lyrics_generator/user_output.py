@@ -1,26 +1,25 @@
 from abc import abstractmethod
 from datetime import datetime
 import enum
+import json
 import os
 from pathlib import Path
 import pandas as pd
 
 from lyrics_generator.logger import log
-from lyrics_generator.schemas import OutputType
+from lyrics_generator.schemas import Lyrics, OutputType, Settings
 
 
 class OutputManager:
     def __init__(self, identifier: str) -> None:
-        self._output_id = (
-            identifier + "_" + datetime.now().strftime("%Y%m%d%Hw%M") + "_results"
-        )
-
-    @property
-    def output_id(self):
-        return self._output_id
+        self._output_id: str = identifier + "_" + datetime.now().strftime("%Y%m%d%H%M")
 
     @abstractmethod
-    def produce_output(self, df: pd.DataFrame):
+    def manage_output(self, df: pd.DataFrame):
+        pass
+
+    @abstractmethod
+    def manage_metadata(self, lyrics: Lyrics, settings: Settings):
         pass
 
 
@@ -61,7 +60,20 @@ class FileOutput(OutputManager):
         if not os.path.exists(self._output_folder):
             os.makedirs(self._output_folder)
 
-        self._file_basename: Path = self._output_folder / self._output_id
+        self._output_basepath: Path = self._output_folder / self._output_id
+        self._results_basepath: str = f"{self._output_basepath}_results"
+
+    def manage_metadata(self, lyrics: Lyrics, settings: Settings):
+        lyrics_metadata = {
+            song_id: " ".join(sequence) for song_id, sequence in lyrics.items()
+        }
+        lyrics_metadata_path = f"{self._output_basepath}_lyrics.json"
+        with open(lyrics_metadata_path, "w") as f:
+            json.dump(lyrics_metadata, f, indent=4)
+
+        settings_metadata_path = f"{self._output_basepath}_settings.json"
+        with open(settings_metadata_path, "w") as f:
+            json.dump(settings.model_dump(), f, indent=4)
 
 
 class CsvOutput(FileOutput):
@@ -69,29 +81,26 @@ class CsvOutput(FileOutput):
     Save out put as a CSV table with epoch, seed, diversity, and result
     """
 
-    def produce_output(self, df: pd.DataFrame):
-        df.to_csv(f"{self._file_basename}.csv", sep="\t", header=True, index=False)
+    def manage_output(self, df: pd.DataFrame):
+        df.to_csv(f"{self._results_basepath}.csv", sep="\t", header=True, index=False)
 
 
 class TxtOutput(MonoOutput, FileOutput):
-    def produce_output(self, df: pd.DataFrame):
+    def manage_output(self, df: pd.DataFrame):
         lines = self._get_output_lines(df)
 
-        with open(f"{self._file_basename}.txt", "w") as f:
+        with open(f"{self._results_basepath}.txt", "w") as f:
             f.writelines(lines)
 
 
-class SeparateEpochTxtOutput(TxtOutput):
-    # TODO: each epoch in a separate file
-    def produce_output(self, df: pd.DataFrame):
-        pass
-
-
 class PrintOutput(MonoOutput, OutputManager):
-    def produce_output(self, df: pd.DataFrame):
+    def manage_output(self, df: pd.DataFrame):
         lines = self._get_output_lines(df)
         for l in lines:
             log.info(l)
+
+    def manage_metadata(self, lyrics: Lyrics, settings: Settings):
+        log.info("Warning: print output does not save metadata")
 
 
 class ResultOutput(enum.Enum):
@@ -101,7 +110,8 @@ class ResultOutput(enum.Enum):
 
 
 class OutputBuilder:
-    def build_output(self, output_type: str, identifier: str, *args) -> OutputManager:
-        output_type = OutputType[output_type]
+    def build_output(
+        self, output_type: OutputType, identifier: str, *args
+    ) -> OutputManager:
         output_class = ResultOutput[output_type].value
         return output_class(identifier, *args)

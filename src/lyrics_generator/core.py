@@ -60,4 +60,5 @@ def generate_lyrics(
     )
     lyrics_model.train(data_lyrics, settings.batch_size, settings.num_epochs)
 
-    output_manager.produce_output(lyric_generator.results)
+    output_manager.manage_output(lyric_generator.results)
+    output_manager.manage_metadata(lyrics, settings)
