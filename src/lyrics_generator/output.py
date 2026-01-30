@@ -8,8 +8,10 @@ from .logger import log
 
 
 class OutputManager:
+    def __init__(self, identifier: str) -> None:
+        self._identifier = identifier
+
     @abstractmethod
-    # TODO: improve (validation/format) (seed/epoch/...)
     def produce_output(self, df: pd.DataFrame):
         pass
 
@@ -43,14 +45,15 @@ class MonoOutput:
 
 
 class FileOutput(OutputManager):
-    def __init__(self, output_folder: Path = Path("results")) -> None:
+    def __init__(self, identifier: str, output_folder: Path = Path("results")) -> None:
+        super().__init__(identifier)
+
         self._output_folder = output_folder
 
         if not os.path.exists(self._output_folder):
             os.makedirs(self._output_folder)
 
-        # TODO: customize
-        self._filename: Path = self._output_folder / "result"
+        self._file_basename: Path = self._output_folder / identifier
 
 
 class CsvOutput(FileOutput):
@@ -59,14 +62,14 @@ class CsvOutput(FileOutput):
     """
 
     def produce_output(self, df: pd.DataFrame):
-        df.to_csv(f"{self._filename}.csv", sep="\t", header=True, index=False)
+        df.to_csv(f"{self._file_basename}.csv", sep="\t", header=True, index=False)
 
 
 class TxtOutput(MonoOutput, FileOutput):
     def produce_output(self, df: pd.DataFrame):
         lines = self._get_output_lines(df)
 
-        with open(f"{self._filename}.txt", "w") as f:
+        with open(f"{self._file_basename}.txt", "w") as f:
             f.writelines(lines)
 
 
@@ -87,7 +90,6 @@ class OutputType(str, enum.Enum):
     print = "print"
     save_txt = "save_txt"
     save_csv = "save_csv"
-    save_txt_separate = "save_txt_separate"
 
 
 class ResultOutput(enum.Enum):
@@ -97,7 +99,7 @@ class ResultOutput(enum.Enum):
 
 
 class OutputBuilder:
-    def build_output(self, output_type: str, *args) -> OutputManager:
+    def build_output(self, output_type: str, identifier: str, *args) -> OutputManager:
         output_type = OutputType[output_type]
         output_class = ResultOutput[output_type].value
-        return output_class(*args)
+        return output_class(identifier, *args)

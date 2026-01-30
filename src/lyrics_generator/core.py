@@ -29,7 +29,7 @@ def generate_lyrics(
     lyrics_input = song_lyrics.get_input()
 
     output_builder = OutputBuilder()
-    output_manager = output_builder.build_output(output_type)
+    output_manager = output_builder.build_output(output_type, lyrics_path.stem)
 
     data_lyrics = LyricsData(lyrics_input)
     data_lyrics.set_min_valid_sequence(settings.min_valid_sequence)
