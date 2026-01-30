@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from datetime import datetime
 import enum
 import os
 from pathlib import Path
@@ -9,7 +10,13 @@ from .logger import log
 
 class OutputManager:
     def __init__(self, identifier: str) -> None:
-        self._identifier = identifier
+        self._output_id = (
+            identifier + "_" + datetime.now().strftime("%Y%m%d") + "_results"
+        )
+
+    @property
+    def output_id(self):
+        return self._output_id
 
     @abstractmethod
     def produce_output(self, df: pd.DataFrame):
@@ -53,7 +60,7 @@ class FileOutput(OutputManager):
         if not os.path.exists(self._output_folder):
             os.makedirs(self._output_folder)
 
-        self._file_basename: Path = self._output_folder / identifier
+        self._file_basename: Path = self._output_folder / self._output_id
 
 
 class CsvOutput(FileOutput):
